@@ -1,6 +1,6 @@
 # daily_budgeting
 
-A new Flutter project.
+A new Flutter project about daily budgeting apk
 
 ## Getting Started
 
