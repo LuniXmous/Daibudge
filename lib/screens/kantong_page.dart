@@ -178,6 +178,7 @@ class _KantongPageState extends State<KantongPage> {
                       MaterialPageRoute(
                         builder: (context) => KantongDetailPage(
                           method: method,
+                          methodColor: color,
                           transactions: logs,
                         ),
                       ),

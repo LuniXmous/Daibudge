@@ -4,11 +4,13 @@ import '../models/transaction_model.dart';
 
 class KantongDetailPage extends StatelessWidget {
   final String method;
+  final Color methodColor;
   final List<TransactionModel> transactions;
 
   const KantongDetailPage({
     super.key,
     required this.method,
+    required this.methodColor,
     required this.transactions,
   });
 
@@ -49,23 +51,6 @@ class KantongDetailPage extends StatelessWidget {
         return Icons.savings_rounded;
       default:
         return Icons.account_balance_wallet_outlined;
-    }
-  }
-
-  Color getMethodColor(String method) {
-    switch (method) {
-      case 'Cash':
-        return Colors.pink.shade700;
-      case 'E-Wallet':
-        return Colors.cyan.shade700;
-      case 'QRIS':
-        return Colors.deepPurple.shade600;
-      case 'Transfer':
-        return Colors.orange.shade700;
-      case 'Tabungan':
-        return Colors.green.shade700;
-      default:
-        return Colors.blueGrey;
     }
   }
 
@@ -111,7 +96,6 @@ class KantongDetailPage extends StatelessWidget {
       ..sort((a, b) => parseDate(b).compareTo(parseDate(a)));
 
     final methodIcon = getMethodIcon(method);
-    final methodColor = getMethodColor(method);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final pageBgColor = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF5F5F2);
     final softCardColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
