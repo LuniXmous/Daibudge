@@ -23,8 +23,36 @@ class DailyBudgetingApp extends StatelessWidget {
           themeMode: dark ? ThemeMode.dark : ThemeMode.light,
           theme: ThemeData(
             brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.green,
+              brightness: Brightness.light,
+            ),
             scaffoldBackgroundColor: const Color(0xFFF5F5F2),
             cardColor: Colors.white,
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+            ),
+            switchTheme: SwitchThemeData(
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) return Colors.green;
+                return Colors.grey;
+              }),
+              trackColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.green.withOpacity(0.35);
+                }
+                return Colors.grey.withOpacity(0.35);
+              }),
+            ),
+            inputDecorationTheme: const InputDecorationTheme(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.green, width: 2),
+              ),
+              floatingLabelStyle: TextStyle(color: Colors.green),
+            ),
             appBarTheme: const AppBarTheme(
               backgroundColor: Color(0xFFF5F5F2),
               foregroundColor: Colors.black,
@@ -37,6 +65,10 @@ class DailyBudgetingApp extends StatelessWidget {
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.green,
+              brightness: Brightness.dark,
+            ),
             scaffoldBackgroundColor: const Color(0xFF0D0D0D),
             cardColor: const Color(0xFF1A1A1A),
             appBarTheme: const AppBarTheme(

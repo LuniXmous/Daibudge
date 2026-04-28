@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   Color get softCardColor =>
       isDark ? const Color(0xFF161616) : Colors.white;
   Color get saldoCardColor =>
-      isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100;
+      isDark ? const Color(0xFF1E1E1E) : const Color.fromARGB(255, 255, 255, 255);
   Color get dividerColor =>
       isDark ? Colors.white24 : Colors.grey.shade400;
   Color get primaryTextColor => isDark ? Colors.white : Colors.black;

@@ -67,8 +67,8 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         color: Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF121212)
-            : const Color(0xFFF5F5F2),
+            ? const Color.fromARGB(255, 23, 23, 23)
+            : const Color.fromARGB(255, 237, 237, 237),
         child: SizedBox(
           height: 68,
           child: Row(

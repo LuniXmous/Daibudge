@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
 import '../models/transaction_model.dart';
+import '../services/google_sheets_service.dart';
 
 class AddTransactionPage extends StatefulWidget {
   final TransactionModel? transaction;
@@ -21,6 +22,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   String transactionType = 'Pemasukan';
   String? paymentMethod;
   String? incomeCategory;
+  String? expenseCategory;
+  String? targetWallet;
 
   List<String> walletMethods = [];
   List<String> incomeSources = [];
@@ -33,7 +36,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   @override
   void initState() {
     super.initState();
-    loadMasterData();
+    loadMasterData(); 
   }
 
   Future<void> loadMasterData() async {
@@ -122,8 +125,12 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         amount: parseFormattedAmount(amountController.text),
         paymentMethod: paymentMethod ?? '',
         incomeCategory: transactionType == 'Pemasukan' ? incomeCategory : null,
-        note: noteController.text,
-        additionalNote: additionalNoteController.text,
+        note: transactionType == 'Pengeluaran'
+            ? (expenseCategory ?? '')
+            : noteController.text,
+        additionalNote: transactionType == 'Transfer Internal'
+            ? (targetWallet ?? '')
+            : additionalNoteController.text,
       );
 
       if (widget.transaction == null) {
@@ -133,6 +140,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         await DatabaseHelper.instance.updateTransaction(
           transaction.toMap(),
           transaction.id!,
+        );
+      }
+
+      try {
+        await GoogleSheetsService().appendTransactionToSheet(transaction);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data tersimpan lokal, tapi gagal sync: $e'),
+          ),
         );
       }
 
@@ -238,6 +256,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       onChanged: (value) {
                         setState(() {
                           paymentMethod = value;
+
+                          if (transactionType == 'Transfer Internal' &&
+                              targetWallet == paymentMethod) {
+                            targetWallet = null;
+                          }
                         });
                       },
                       validator: (value) {
@@ -247,39 +270,62 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
-                    if (transactionType == 'Pemasukan')
-                      Column(
-                        children: [
-                          DropdownButtonFormField<String>(
-                            value: incomeCategory,
-                            decoration: const InputDecoration(
-                              labelText: 'Sumber Pemasukan',
-                              border: OutlineInputBorder(),
-                            ),
-                            items: incomeSources
-                                .map(
-                                  (source) => DropdownMenuItem(
-                                    value: source,
-                                    child: Text(source),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                incomeCategory = value;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Sumber pemasukan wajib dipilih';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+                    if (transactionType == 'Pengeluaran') ...[
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        initialValue: expenseCategory,
+                        decoration: const InputDecoration(
+                          labelText: 'Kategori Pengeluaran',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          expenseCategory = value;
+                        },
+                        validator: (value) {
+                          if (transactionType == 'Pengeluaran' &&
+                              (value == null || value.isEmpty)) {
+                            return 'Kategori pengeluaran wajib diisi';
+                          }
+                          return null;
+                        },
                       ),
+                    ],
+                    if (transactionType == 'Transfer Internal') ...[
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: walletMethods
+                            .where((method) => method != paymentMethod)
+                            .contains(targetWallet)
+                        ? targetWallet
+                        : null,
+                        decoration: const InputDecoration(
+                          labelText: 'Kantong Tujuan',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: walletMethods
+                            .where((method) => method != paymentMethod)
+                            .map(
+                              (method) => DropdownMenuItem(
+                                value: method,
+                                child: Text(method),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            targetWallet = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (transactionType == 'Transfer Internal' &&
+                              (value == null || value.isEmpty)) {
+                            return 'Kantong tujuan wajib dipilih';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: noteController,
                       decoration: const InputDecoration(

@@ -17,7 +17,7 @@ class _KantongPageState extends State<KantongPage> {
 
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
   Color get pageBgColor => isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF5F5F2);
-  Color get saldoCardColor => isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100;
+  Color get saldoCardColor => isDark ? const Color(0xFF1E1E1E) : const Color.fromARGB(255, 255, 255, 255);
 
   @override
   void initState() {
