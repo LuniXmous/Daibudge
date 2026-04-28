@@ -41,3 +41,29 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# VS Code (optional tapi disarankan)
+.vscode/
+
+# MacOS build
+macos/Flutter/ephemeral/
+macos/Flutter/Generated.xcconfig
+
+# iOS
+ios/Pods/
+ios/Flutter/ephemeral/
+ios/Flutter/Generated.xcconfig
+
+# Android
+android/.gradle/
+android/local.properties
+
+# Environment / secret (PENTING BANGET)
+.env
+
+# Google config (JANGAN KE-PUSH)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+google-services.json
+GoogleService-Info.plist
