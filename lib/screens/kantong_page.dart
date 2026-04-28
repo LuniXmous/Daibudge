@@ -16,7 +16,7 @@ class _KantongPageState extends State<KantongPage> {
   List<Map<String, dynamic>> walletMethods = [];
 
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
-  Color get pageBgColor => isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF5F5F2);
+  Color get pageBgColor => isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF8FAFC);
   Color get saldoCardColor => isDark ? const Color(0xFF1E1E1E) : const Color.fromARGB(255, 255, 255, 255);
 
   @override
@@ -120,8 +120,31 @@ class _KantongPageState extends State<KantongPage> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: saldoCardColor,
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [
+                          const Color(0xFF1E293B),
+                          const Color(0xFF0F172A),
+                        ]
+                      : [
+                          Colors.white,
+                          const Color.fromARGB(255, 232, 232, 232),
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color.fromARGB(31, 240, 240, 240) : Colors.black12,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -131,7 +154,7 @@ class _KantongPageState extends State<KantongPage> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.grey.shade400 : Colors.black87,
+                         color: isDark ? Colors.white : Colors.black87
                       ),
                     ),
                   ),
@@ -140,13 +163,13 @@ class _KantongPageState extends State<KantongPage> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.grey.shade300 : Colors.black87,
+                       color: isDark ? Colors.white : Colors.black87
                     ),
                   ),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.account_balance_wallet_outlined,
-                    color: isDark ? Colors.grey.shade400 : Colors.black54,
+                    color: isDark ? Colors.white : Colors.black87
                   ),
                 ],
               ),
@@ -188,8 +211,19 @@ class _KantongPageState extends State<KantongPage> {
                   child: Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: color,
+                      color: color.withOpacity(0.15), // 🔥 transparan
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.08),
+                          blurRadius: 12,
+                          offset: const Offset(0,6),
+                        ),
+                      ],
+                      border: Border.all(
+                        color: color.withOpacity(isDark ? 0.25 : 0.15),
+                        width: 1,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,32 +231,32 @@ class _KantongPageState extends State<KantongPage> {
                         Icon(
                           icon,
                           size: 40,
-                          color: Colors.white,
+                          color: color,
                         ),
                         const Spacer(),
                         Text(
                           method,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: color,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           formatRupiah(balance),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: color,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${logs.length} transaksi',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10,
-                            color: Colors.white70,
+                            color: color,
                           ),
                         ),
                       ],

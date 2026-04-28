@@ -82,111 +82,122 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          final pickedFile = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 75,
-                          );
-
-                          if (pickedFile == null) return;
-
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString(photoKey, pickedFile.path);
-
-                          setState(() {
-                            customPhotoUrl = pickedFile.path;
-                          });
-                        },
-                        child: CircleAvatar(
-                          radius: 42,
-                          backgroundImage: customPhotoUrl != null
-                              ? customPhotoUrl!.startsWith('http')
-                                  ? NetworkImage(customPhotoUrl!)
-                                  : FileImage(File(customPhotoUrl!)) as ImageProvider
-                              : null,
-                          child: customPhotoUrl == null
-                              ? const Icon(Icons.person, size: 42)
-                              : null,
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final pickedFile = await picker.pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 75,
+                        );
+ 
+                        if (pickedFile == null) return;
+ 
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString(photoKey, pickedFile.path);
+ 
+                        setState(() {
+                          customPhotoUrl = pickedFile.path;
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 42,
+                        backgroundImage: customPhotoUrl != null
+                            ? customPhotoUrl!.startsWith('http')
+                                ? NetworkImage(customPhotoUrl!)
+                                : FileImage(File(customPhotoUrl!)) as ImageProvider
+                            : null,
+                        child: customPhotoUrl == null
+                            ? const Icon(Icons.person, size: 42)
+                            : null,
+                      ),
+                    ),
+ 
+                    const SizedBox(height: 0),
+ 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          customName ?? 'User',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            customName ?? 'User',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.edit, size: 18),
-                            onPressed: () async {
-                              final controller = TextEditingController(
-                                text: customName ?? '',
-                              );
-
-                              final result = await showDialog<String>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Edit Nama Profil'),
-                                  content: TextField(
-                                    controller: controller,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Masukkan nama',
-                                    ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, size: 18),
+                          onPressed: () async {
+                            final controller = TextEditingController(
+                              text: customName ?? '',
+                            );
+ 
+                            final result = await showDialog<String>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Edit Nama Profil'),
+                                content: TextField(
+                                  controller: controller,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Masukkan nama',
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Batal'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () => Navigator.pop(
-                                        context,
-                                        controller.text,
-                                      ),
-                                      child: const Text('Simpan'),
-                                    ),
-                                  ],
                                 ),
-                              );
-
-                              if (result != null && result.trim().isNotEmpty) {
-                                final prefs = await SharedPreferences.getInstance();
-                                await prefs.setString(nameKey, result.trim());
-
-                                setState(() {
-                                  customName = result.trim();
-                                });
-                              }
-                            },
-                          ),
-                        ],
-                      ), 
-
-                      Text(
-                        user!.email,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Batal'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () => Navigator.pop(
+                                      context,
+                                      controller.text,
+                                    ),
+                                    child: const Text('Simpan'),
+                                  ),
+                                ],
+                              ),
+                            );
+ 
+                            if (result != null && result.trim().isNotEmpty) {
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setString(nameKey, result.trim());
+ 
+                              setState(() {
+                                customName = result.trim();
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ), 
+ 
+                    Text(
+                      user!.email,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
+                  child: Text(
+                    'Laporan Keuangan',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             Card(
               child: ListTile(
                 leading: const Icon(Icons.table_chart_outlined),
@@ -295,15 +306,29 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            const SizedBox(height: 15),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.account_balance_wallet_outlined),
+                title: const Text('Laporan Statistik'),
+                subtitle: const Text('Laporan dalam bentuk Chart'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingMasterDataPage(
+                        title: 'Metode Transaksi / Kantong',
+                        tableType: 'wallet',
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 0),
             Row(
               children: [
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Text(
@@ -313,12 +338,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.grey.shade600,
                       letterSpacing: 0.5,
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey.shade400,
                   ),
                 ),
               ],
@@ -364,15 +383,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 0),
             Row(
               children: [
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   child: Text(
@@ -382,12 +395,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.grey.shade600,
                       letterSpacing: 0.5,
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey.shade400,
                   ),
                 ),
               ],
@@ -407,7 +414,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            const SizedBox(height: 19),
+            const SizedBox(height: 15),
               Center(
                 child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

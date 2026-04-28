@@ -97,8 +97,8 @@ class KantongDetailPage extends StatelessWidget {
 
     final methodIcon = getMethodIcon(method);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pageBgColor = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF5F5F2);
-    final softCardColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
+    final pageBgColor = Theme.of(context).scaffoldBackgroundColor;
+    final softCardColor = Theme.of(context).cardColor;
     final dividerColor = isDark ? Colors.white24 : Colors.grey.shade400;
     final secondaryTextColor = isDark ? Colors.white60 : Colors.black54;
 
@@ -169,9 +169,9 @@ class KantongDetailPage extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '${transactions.length} transaksi',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white70,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -236,8 +236,8 @@ class KantongDetailPage extends StatelessWidget {
                             final prefix = getTransactionPrefix(t.type);
 
                             return Card(
-                              color: softCardColor,
-                              elevation: 0.8,
+                                elevation: 2,
+                                shadowColor: Colors.black.withOpacity(0.1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),

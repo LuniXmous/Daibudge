@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'add_transaction_page.dart';
 import 'home_page.dart';
 import 'kantong_page.dart';
-import 'setting_page.dart';
+import 'monthly_budget_page.dart';
 import 'profile_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
@@ -22,7 +22,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       case 1:
         return const KantongPage();
       case 3:
-        return const SettingPage();
+        return const MonthlyBudgetPage();
       case 4:
         return const ProfilePage();
       default:
@@ -63,38 +63,28 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? const Color.fromARGB(255, 23, 23, 23)
-            : const Color.fromARGB(255, 237, 237, 237),
-        child: SizedBox(
-          height: 68,
-          child: Row(
-            children: [
-              navItem(
-                icon: Icons.home_outlined,
-                label: 'Beranda',
-                index: 0,
-              ),
-              navItem(
-                icon: Icons.account_balance_wallet_outlined,
-                label: 'Kantong',
-                index: 1,
-              ),
-              const SizedBox(width: 56),
-              navItem(
-                icon: Icons.settings_outlined,
-                label: 'Settings',
-                index: 3,
-              ),
-              navItem(
-                icon: Icons.person_outline,
-                label: 'Profil',
-                index: 4,
-              ),
-            ],
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        child: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color.fromARGB(255, 23, 23, 23)
+              : const Color.fromARGB(255, 255, 255, 255),
+          child: SizedBox(
+            height: 68,
+            child: Row(
+              children: [
+                navItem(icon: Icons.home_outlined, label: 'Beranda', index: 0),
+                navItem(icon: Icons.account_balance_wallet_outlined, label: 'Kantong', index: 1),
+                const SizedBox(width: 56),
+                navItem(icon: Icons.calendar_month_outlined, label: 'Bulanan', index: 3),
+                navItem(icon: Icons.person_outline, label: 'Profil', index: 4),
+              ],
+            ),
           ),
         ),
       ),

@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -55,11 +55,37 @@ class DatabaseHelper {
       )
     ''');
 
+    await db.execute('''
+    CREATE TABLE monthly_budgets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      month TEXT NOT NULL,
+      source_wallet TEXT NOT NULL,
+      description TEXT NOT NULL,
+      amount REAL NOT NULL,
+      target_wallet TEXT NOT NULL,
+      is_paid INTEGER NOT NULL DEFAULT 0,
+      is_recurring INTEGER NOT NULL DEFAULT 1
+    )
+    ''');
+
     await _insertDefaultData(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
+    if (oldVersion < 4) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS monthly_budgets (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          month TEXT NOT NULL,
+          source_wallet TEXT NOT NULL,
+          description TEXT NOT NULL,
+          amount REAL NOT NULL,
+          target_wallet TEXT NOT NULL,
+          is_paid INTEGER NOT NULL DEFAULT 0,
+          is_recurring INTEGER NOT NULL DEFAULT 1
+        )
+      ''');
+
       await db.execute('''
         CREATE TABLE IF NOT EXISTS wallet_methods (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -193,4 +219,46 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
+
+  Future<int> insertMonthlyBudget(Map<String, dynamic> data) async {
+  final db = await database;
+  return await db.insert('monthly_budgets', data);
+}
+
+Future<List<Map<String, dynamic>>> getMonthlyBudgetsByMonth(String month) async {
+  final db = await database;
+  return await db.query(
+    'monthly_budgets',
+    where: 'month = ?',
+    whereArgs: [month],
+    orderBy: 'id DESC',
+  );
+}
+
+Future<List<Map<String, dynamic>>> getMonthlyBudgets() async {
+  final db = await database;
+  return await db.query(
+    'monthly_budgets',
+    orderBy: 'id DESC',
+  );
+}
+
+Future<int> updateMonthlyBudget(Map<String, dynamic> data) async {
+  final db = await database;
+  return await db.update(
+    'monthly_budgets',
+    data,
+    where: 'id = ?',
+    whereArgs: [data['id']],
+  );
+}
+
+Future<int> deleteMonthlyBudget(int id) async {
+  final db = await database;
+  return await db.delete(
+    'monthly_budgets',
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
 }

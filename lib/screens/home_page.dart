@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
 
   Color get pageBgColor =>
-      isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF5F5F2);
+      isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF8FAFC);
   Color get softCardColor =>
       isDark ? const Color(0xFF161616) : Colors.white;
   Color get saldoCardColor =>
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 2.4,
+        childAspectRatio: 2.2,
       ),
       itemCount: wallets.length,
       itemBuilder: (context, index) {
@@ -99,6 +99,17 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         color: color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+         border: Border.all(
+            color: color.withOpacity(isDark ? 0.25 : 0.15),
+            width: 1,
+          ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -111,9 +122,10 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Text(
                   method,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
+                    color: color,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -336,6 +348,7 @@ class _HomePageState extends State<HomePage> {
                         : Colors.green.shade50,
                     textColor: Colors.green.shade400,
                     icon: Icons.south_west_rounded,
+                    
                   ),
                 ),
                 Expanded(
@@ -356,8 +369,31 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: saldoCardColor,
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [
+                          const Color(0xFF1E293B),
+                          const Color(0xFF0F172A),
+                        ]
+                      : [
+                          Colors.white,
+                          const Color.fromARGB(255, 232, 232, 232),
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color.fromARGB(31, 240, 240, 240) : Colors.black12,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -396,7 +432,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 11),
             if (walletMethods.isNotEmpty) ...[
               SizedBox(
-                height: 150,
+                height: 160,
                 child: PageView.builder(
                   controller: pageController,
                   itemCount: chunkWallets(walletMethods, 4).length,
@@ -423,7 +459,7 @@ class _HomePageState extends State<HomePage> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: currentPage == index
-                          ? (isDark ? Colors.white : Colors.black87)
+                          ? (isDark ? Colors.white : Colors.green)
                           : (isDark
                               ? Colors.white24
                               : Colors.grey.shade400),
