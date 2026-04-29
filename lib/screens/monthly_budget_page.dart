@@ -45,10 +45,24 @@ class _MonthlyBudgetPageState extends State<MonthlyBudgetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Monthly Budgeting'),
+        title: const Text('Pengeluaran Bulanan'),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: groupedMonths.isEmpty
+      ? const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Belum ada monthly budget.\nTambahkan tagihan bulanan pertama kamu dari detail bulan.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        )
+      :ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         itemCount: groupedMonths.length,
         itemBuilder: (context, index) {

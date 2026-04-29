@@ -209,7 +209,7 @@ class _KantongPageState extends State<KantongPage> {
                     await refreshAll();
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(18),
+                   padding: const EdgeInsets.all(0),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.15), // 🔥 transparan
                       borderRadius: BorderRadius.circular(20),
@@ -225,38 +225,120 @@ class _KantongPageState extends State<KantongPage> {
                         width: 1,
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack( 
+                      clipBehavior: Clip.hardEdge,
                       children: [
-                        Icon(
-                          icon,
-                          size: 40,
-                          color: color,
-                        ),
-                        const Spacer(),
-                        Text(
-                          method,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: color,
+                        Positioned(
+                          right: -18,
+                          top: -16,
+                          child: Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color.withOpacity(0.10),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          formatRupiah(balance),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: color,
+                        Positioned(
+                          right: 18,
+                          bottom: -24,
+                          child: Container(
+                            width: 58,
+                            height: 58,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color.withOpacity(0.07),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${logs.length} transaksi',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: color,
+                        Positioned(
+                          right: -8,
+                          bottom: 8,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: color.withOpacity(0.06),
+                            ),
+                          ),
+                        ),
+
+                        // tambahan pola
+                        Positioned(
+                          left: -14,
+                          top: 10,
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color.withOpacity(0.055),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 18,
+                          bottom: -18,
+                          child: Container(
+                            width: 42,
+                            height: 42,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: color.withOpacity(0.045),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 42,
+                          top: 18,
+                          child: Transform.rotate(
+                            angle: 0.7,
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: color.withOpacity(0.045),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(icon, size: 18, color: color),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      method,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: color,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                formatRupiah(balance),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

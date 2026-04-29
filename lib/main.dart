@@ -27,6 +27,7 @@ class DailyBudgetingApp extends StatelessWidget {
               seedColor: const Color(0xFF16A34A),
               brightness: Brightness.light,
             ),
+            
             scaffoldBackgroundColor: const Color(0xFFF8FAFC),
             cardColor: Colors.white,
             cardTheme: CardTheme(
@@ -58,18 +59,25 @@ class DailyBudgetingApp extends StatelessWidget {
               ),
             ),
 
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0xFF16A34A),
+              foregroundColor: Colors.white,
+            ),
+
             inputDecorationTheme: const InputDecorationTheme(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
             ),
           ),
+
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.green,
             brightness: Brightness.dark,
           ),
+
             scaffoldBackgroundColor: const Color(0xFF0D0D0D),
             cardColor: const Color(0xFF1A1A1A),
             cardTheme: CardTheme(
@@ -84,15 +92,23 @@ class DailyBudgetingApp extends StatelessWidget {
                 ),
               ),
             ),
+
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0xFF22C55E),
+              foregroundColor: Colors.white,
+            ),
+
             appBarTheme: const AppBarTheme(
               backgroundColor: Color(0xFF0D0D0D),
               foregroundColor: Colors.white,
               elevation: 0,
               centerTitle: true,
             ),
+
             bottomAppBarTheme: const BottomAppBarTheme(
               color: Color(0xFF121212),
             ),
+
           ),
           home: const MainNavigationPage(),
         );

@@ -111,16 +111,15 @@ class KantongDetailPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Column(
-        children: [
+        children: [ 
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 colors: [
                   methodColor,
-                  methodColor.withOpacity(0.7),
+                  methodColor.withOpacity(0.72),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -133,45 +132,76 @@ class KantongDetailPage extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
+            child: Stack(
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    methodIcon,
-                    size: 28,
-                    color: methodColor,
+                Positioned(
+                  right: -34,
+                  top: -28,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Colors.white.withOpacity(0.12),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Positioned(
+                  right: 34,
+                  bottom: -42,
+                  child: CircleAvatar(
+                    radius: 54,
+                    backgroundColor: Colors.white.withOpacity(0.08),
+                  ),
+                ),
+                Positioned(
+                  left: -28,
+                  bottom: -32,
+                  child: CircleAvatar(
+                    radius: 46,
+                    backgroundColor: Colors.white.withOpacity(0.06),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     children: [
-                      Text(
-                        method,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          methodIcon,
+                          size: 28,
+                          color: methodColor,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        formatRupiah(totalBalance),
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${transactions.length} transaksi',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              method,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              formatRupiah(totalBalance),
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${transactions.length} transaksi',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -236,10 +266,15 @@ class KantongDetailPage extends StatelessWidget {
                             final prefix = getTransactionPrefix(t.type);
 
                             return Card(
-                                elevation: 2,
-                                shadowColor: Colors.black.withOpacity(0.1),
+                              color: softCardColor,
+                              elevation: 3,
+                              shadowColor: Colors.black.withOpacity(isDark ? 0.45 : 0.12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
+                                side: BorderSide(
+                                  color: isDark ? Colors.white12 : Colors.black12,
+                                  width: 0.8,
+                                ),
                               ),
                               child: ListTile(
                                 contentPadding:

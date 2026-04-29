@@ -60,12 +60,9 @@ class _HomePageState extends State<HomePage> {
 
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
 
-  Color get pageBgColor =>
-      isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF8FAFC);
-  Color get softCardColor =>
-      isDark ? const Color(0xFF161616) : Colors.white;
-  Color get saldoCardColor =>
-      isDark ? const Color(0xFF1E1E1E) : const Color.fromARGB(255, 255, 255, 255);
+  Color get pageBgColor => Theme.of(context).scaffoldBackgroundColor;
+  Color get softCardColor => Theme.of(context).cardColor;
+  Color get saldoCardColor => Theme.of(context).cardColor;
   Color get dividerColor =>
       isDark ? Colors.white24 : Colors.grey.shade400;
   Color get primaryTextColor => isDark ? Colors.white : Colors.black;
@@ -95,7 +92,7 @@ class _HomePageState extends State<HomePage> {
     final color = Color(wallet['color']);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(16),
@@ -106,43 +103,88 @@ class _HomePageState extends State<HomePage> {
             offset: const Offset(0, 6),
           ),
         ],
-         border: Border.all(
-            color: color.withOpacity(isDark ? 0.25 : 0.15),
-            width: 1,
-          ),
+        border: Border.all(
+          color: color.withOpacity(isDark ? 0.25 : 0.15),
+          width: 1,
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  method,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+        child: Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            Positioned(
+              right: -18,
+              top: -16,
+              child: Container(
+                width: 62,
+                height: 62,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.10),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            formatRupiah(amount),
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: color,
             ),
-          ),
-        ],
-      ),
+            Positioned(
+              right: 18,
+              bottom: -24,
+              child: Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.07),
+                ),
+              ),
+            ),
+            Positioned(
+              right: -8,
+              bottom: 8,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: color.withOpacity(0.06),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(icon, size: 18, color: color),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          method,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: color,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    formatRupiah(amount),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
     );
   }
 
@@ -337,33 +379,35 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: SummaryItem(
-                    title: 'Pemasukan',
-                    amount: formatRupiah(totalIncome),
-                    bgColor: isDark
-                        ? const Color(0xFF1A2A1D)
-                        : Colors.green.shade50,
-                    textColor: Colors.green.shade400,
-                    icon: Icons.south_west_rounded,
-                    
-                  ),
+              SizedBox(
+                height: 102,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SummaryItem(
+                        title: 'Pemasukan',
+                        amount: formatRupiah(totalIncome),
+                        bgColor: isDark
+                            ? const Color(0xFF1A2A1D)
+                            : Colors.green.shade50,
+                        textColor: Colors.green.shade400,
+                        icon: Icons.south_west_rounded,
+                      ),
+                    ),
+                    Expanded(
+                      child: SummaryItem(
+                        title: 'Pengeluaran',
+                        amount: formatRupiah(totalExpense),
+                        bgColor: isDark
+                            ? const Color(0xFF2A1A1A)
+                            : Colors.red.shade50,
+                        textColor: Colors.red.shade400,
+                        icon: Icons.north_east_rounded,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: SummaryItem(
-                    title: 'Pengeluaran',
-                    amount: formatRupiah(totalExpense),
-                    bgColor: isDark
-                        ? const Color(0xFF2A1A1A)
-                        : Colors.red.shade50,
-                    textColor: Colors.red.shade400,
-                    icon: Icons.north_east_rounded,
-                  ),
-                ),
-              ],
-            ),
+              ),
             const SizedBox(height: 14),
             Container(
               width: double.infinity,
@@ -459,7 +503,7 @@ class _HomePageState extends State<HomePage> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: currentPage == index
-                          ? (isDark ? Colors.white : Colors.green)
+                          ? (isDark ? const Color.fromARGB(255, 60, 138, 63) : const Color.fromARGB(255, 76, 175, 80))
                           : (isDark
                               ? Colors.white24
                               : Colors.grey.shade400),
@@ -469,7 +513,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ] else
-              const SizedBox.shrink(),
+            const SizedBox.shrink(),
             const SizedBox(height: 20),
             Expanded(
               child: transactions.isEmpty
@@ -519,6 +563,7 @@ class _HomePageState extends State<HomePage> {
                                           : Colors.grey,
                                       fontSize: 12,
                                     ),
+                                    
                                   ),
                                 ),
                                 Expanded(
@@ -537,10 +582,16 @@ class _HomePageState extends State<HomePage> {
 
                               return Card(
                                 color: softCardColor,
-                                elevation: 0.8,
+                                elevation: 3,
+                                shadowColor: Colors.black.withOpacity(isDark ? 0.45 : 0.12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
+                                  side: BorderSide(
+                                    color: isDark ? Colors.white12 : Colors.black12,
+                                    width: 0.8,
+                                  ),
                                 ),
+                                
                                 child: ListTile(
                                   contentPadding:
                                       const EdgeInsets.symmetric(

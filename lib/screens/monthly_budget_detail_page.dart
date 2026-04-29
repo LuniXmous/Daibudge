@@ -212,8 +212,7 @@ class _MonthlyBudgetDetailPageState extends State<MonthlyBudgetDetailPage> {
                         ) ??
                         0;
 
-                    final now = DateTime.now();
-                    final month = DateFormat('MMMM yyyy', 'id_ID').format(now);
+                    final month = widget.month;
 
                     final newBudget = MonthlyBudget(
                       month: month,
@@ -251,71 +250,236 @@ class _MonthlyBudgetDetailPageState extends State<MonthlyBudgetDetailPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
-          Card(
-            child: ListTile(
-              title: const Text(
-                'Pengeluaran Bulanan',
-                style: TextStyle(fontWeight: FontWeight.bold),
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue.withOpacity(0.18),
+                  Colors.blue.withOpacity(0.04),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              subtitle: Text(
-                '${currencyFormatter.format(paidAmount)} / ${currencyFormatter.format(totalAmount)}\n'
-                '$paidCount / ${budgets.length} tagihan selesai',
+              border: Border.all(
+                color: Colors.blue.withOpacity(0.35),
+                width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.16),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -20,
+                  top: -10,
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.blue.withOpacity(0.12),
+                  ),
+                ),
+                Positioned(
+                  right: 10,
+                  bottom: -25,
+                  child: CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Colors.blue.withOpacity(0.08),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Pengeluaran Bulanan',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      Text(
+                        '${currencyFormatter.format(paidAmount)} / ${currencyFormatter.format(totalAmount)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        '$paidCount / ${budgets.length} tagihan selesai',
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // 🔥 PROGRESS BAR
+                      LinearProgressIndicator(
+                        value: budgets.isEmpty
+                            ? 0
+                            : paidCount / budgets.length,
+                        minHeight: 6,
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blue,
+                        backgroundColor: Colors.blue.withOpacity(0.2),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
 
           if (budgets.isEmpty)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.only(top: 40),
-                child: Text('Belum ada tagihan bulan ini'),
+                padding: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.receipt_long_outlined,
+                      size: 48,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Belum ada tagihan bulan ini',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Tekan tombol + untuk menambahkan tagihan',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
           ...budgets.map((b) {
-            return Card(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: b.isPaid ? Colors.green : Colors.grey,
-                  child: Icon(
-                    b.isPaid ? Icons.check : Icons.schedule,
-                    color: Colors.white,
+              final isPaid = b.isPaid;
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: LinearGradient(
+                    colors: isPaid
+                        ? [
+                            Colors.green.withOpacity(0.18),
+                            Colors.green.withOpacity(0.04),
+                          ]
+                        : [
+                            Colors.orange.withOpacity(0.18),
+                            Colors.orange.withOpacity(0.04),
+                          ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  border: Border.all(
+                    color: isPaid
+                        ? Colors.green.withOpacity(0.35)
+                        : Colors.orange.withOpacity(0.35),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isPaid ? Colors.green : Colors.orange).withOpacity(0.16),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                title: Text(
-                  b.description,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  '${b.sourceWallet} → ${b.targetWallet}\n'
-                  '${currencyFormatter.format(b.amount)}',
-                ),
-                isThreeLine: true,
-                trailing: Checkbox(
-                  value: b.isPaid,
-                  onChanged: (value) async {
-                    final updated = MonthlyBudget(
-                      id: b.id,
-                      month: b.month,
-                      sourceWallet: b.sourceWallet,
-                      description: b.description,
-                      amount: b.amount,
-                      targetWallet: b.targetWallet,
-                      isPaid: value ?? false,
-                      isRecurring: b.isRecurring,
-                    );
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: -20,
+                      top: -10,
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: (isPaid ? Colors.green : Colors.orange)
+                            .withOpacity(0.12),
+                      ),
+                    ),
+                    Positioned(
+                      right: 10,
+                      bottom: -25,
+                      child: CircleAvatar(
+                        radius: 32,
+                        backgroundColor: (isPaid ? Colors.green : Colors.orange)
+                            .withOpacity(0.08),
+                      ),
+                    ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: isPaid ? Colors.green : Colors.orange,
+                        child: Icon(
+                          isPaid ? Icons.check : Icons.schedule,
+                          color: Colors.white,
+                        ),
+                      ),
+                      title: Text(
+                        b.description,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${b.sourceWallet} → ${b.targetWallet}\n'
+                        '${currencyFormatter.format(b.amount)}',
+                      ),
+                      isThreeLine: true,
+                      trailing: Checkbox(
+                        value: isPaid,
+                        activeColor: isPaid ? Colors.green : Colors.orange,
+                        onChanged: (value) async {
+                          final updated = MonthlyBudget(
+                            id: b.id,
+                            month: b.month,
+                            sourceWallet: b.sourceWallet,
+                            description: b.description,
+                            amount: b.amount,
+                            targetWallet: b.targetWallet,
+                            isPaid: value ?? false,
+                            isRecurring: b.isRecurring,
+                          );
 
-                    await DatabaseHelper.instance.updateMonthlyBudget(
-                      updated.toMap(),
-                    );
+                          await DatabaseHelper.instance.updateMonthlyBudget(
+                            updated.toMap(),
+                          );
 
-                    await loadBudgets();
-                  },
+                          await loadBudgets();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            );
-          }),
+              );
+            }),
         ],
       ),
       floatingActionButton: FloatingActionButton(

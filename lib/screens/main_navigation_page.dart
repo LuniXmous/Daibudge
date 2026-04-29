@@ -50,40 +50,48 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: currentPage,
-      floatingActionButton: Container(
-        width: 56,
-        height: 56,
-        decoration: const BoxDecoration(
-          color: Colors.green,
-          shape: BoxShape.circle,
-        ),
-        child: IconButton(
-          onPressed: openAddTransaction,
-          icon: const Icon(Icons.add, color: Colors.white),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: openAddTransaction,
+        backgroundColor: const Color(0xFF22C55E),
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(
+                Theme.of(context).brightness == Brightness.dark ? 0.45 : 0.12,
+              ),
+              blurRadius: 18,
+              offset: const Offset(0, -6),
+            ),
+          ],
         ),
-        child: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? const Color.fromARGB(255, 23, 23, 23)
-              : const Color.fromARGB(255, 255, 255, 255),
-          child: SizedBox(
-            height: 68,
-            child: Row(
-              children: [
-                navItem(icon: Icons.home_outlined, label: 'Beranda', index: 0),
-                navItem(icon: Icons.account_balance_wallet_outlined, label: 'Kantong', index: 1),
-                const SizedBox(width: 56),
-                navItem(icon: Icons.calendar_month_outlined, label: 'Bulanan', index: 3),
-                navItem(icon: Icons.person_outline, label: 'Profil', index: 4),
-              ],
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 23, 23, 23)
+                : Colors.white,
+            child: SizedBox(
+              height: 68,
+              child: Row(
+                children: [
+                  navItem(icon: Icons.home_outlined, label: 'Beranda', index: 0),
+                  navItem(icon: Icons.account_balance_wallet_outlined, label: 'Kantong', index: 1),
+                  const SizedBox(width: 56),
+                  navItem(icon: Icons.calendar_month_outlined, label: 'Bulanan', index: 3),
+                  navItem(icon: Icons.person_outline, label: 'Profil', index: 4),
+                ],
+              ),
             ),
           ),
         ),
