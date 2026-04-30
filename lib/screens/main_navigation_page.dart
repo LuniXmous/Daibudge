@@ -4,6 +4,7 @@ import 'home_page.dart';
 import 'kantong_page.dart';
 import 'monthly_budget_page.dart';
 import 'profile_page.dart';
+import 'dart:ui';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -14,6 +15,7 @@ class MainNavigationPage extends StatefulWidget {
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
   int selectedIndex = 0;
+  bool isFabOpen = false;
 
   Widget get currentPage {
     switch (selectedIndex) {
@@ -30,10 +32,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     }
   }
 
-  void onItemTapped(int index) {
+  void onItemTapped(int index) async {
+    if (isFabOpen) {
+      setState(() => isFabOpen = false);
+      await Future.delayed(const Duration(milliseconds: 150));
+    }
+
     setState(() {
       selectedIndex = index;
     });
+  }
+
+  Future<void> openScanReceipt() async {
+    print("Scan receipt clicked");
   }
 
   Future<void> openAddTransaction() async {
@@ -49,15 +60,105 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: currentPage,
-      floatingActionButton: FloatingActionButton(
-        onPressed: openAddTransaction,
-        backgroundColor: const Color(0xFF22C55E),
-        foregroundColor: Colors.white,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add),
+      body: GestureDetector(
+        onTap: () {
+          if (isFabOpen) {
+            setState(() {
+              isFabOpen = false;
+            });
+          }
+        },
+        child: currentPage,
       ),
+      // 🔥 FAB EXPAND
+      floatingActionButton: SizedBox(
+        width: 67,
+        height: 78,
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutBack,
+              left: isFabOpen ? -37 : 16,
+              bottom: isFabOpen ? 58 : 14,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: isFabOpen ? 1 : 0,
+                child: FloatingActionButton.small(
+                  heroTag: "scan",
+                  shape: const CircleBorder(),
+                  onPressed: isFabOpen ? openScanReceipt : null,
+                  backgroundColor: const Color(0xFF22C55E),
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.camera_alt),
+                ),
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutBack,
+              right: isFabOpen ? 10 : 16,
+              bottom: isFabOpen ? 78 : 14,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: isFabOpen ? 1 : 0,
+                child: FloatingActionButton.small(
+                  heroTag: "add",
+                  shape: const CircleBorder(),
+                  onPressed: isFabOpen ? openAddTransaction : null,
+                  backgroundColor: const Color(0xFF22C55E),
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.add),
+                ),
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutBack,
+              right: isFabOpen ? -37 : 16,
+              bottom: isFabOpen ? 58 : 14,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: isFabOpen ? 1 : 0,
+                child: FloatingActionButton.small(
+                  heroTag: "add",
+                  shape: const CircleBorder(),
+                  onPressed: isFabOpen ? openAddTransaction : null,
+                  backgroundColor: const Color(0xFF22C55E),
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.edit),
+                ),
+              ),
+            ),
+            Hero(
+              tag: "monthly_add_fab",
+              child: FloatingActionButton(
+                heroTag: null,
+                shape: const CircleBorder(),
+                onPressed: () {
+                  setState(() {
+                    isFabOpen = !isFabOpen;
+                  });
+                },
+                backgroundColor: const Color(0xFF22C55E),
+                foregroundColor: Colors.white,
+                child: AnimatedRotation(
+                  turns: isFabOpen ? 0.125 : 0,
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutBack,
+                  child: const Icon(Icons.add),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // 🔥 NAVBAR
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

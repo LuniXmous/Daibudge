@@ -176,6 +176,20 @@ class _MonthlyBudgetPageState extends State<MonthlyBudgetPage> {
           );
         },
       ),
+      floatingActionButton: Visibility(
+        visible: false,
+        maintainState: true,
+        maintainAnimation: true,
+        maintainSize: true,
+        child: Hero(
+          tag: "monthly_add_fab",
+          child: FloatingActionButton(
+            heroTag: null,
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ),
     );
   }
 }

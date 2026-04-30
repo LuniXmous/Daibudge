@@ -483,6 +483,10 @@ class _MonthlyBudgetDetailPageState extends State<MonthlyBudgetDetailPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "monthly_add_fab",
+        shape: const CircleBorder(),
+        backgroundColor: const Color(0xFF22C55E),
+        foregroundColor: Colors.white,
         onPressed: showAddBudgetDialog,
         child: const Icon(Icons.add),
       ),

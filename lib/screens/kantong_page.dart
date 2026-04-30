@@ -314,13 +314,13 @@ class _KantongPageState extends State<KantongPage> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(icon, size: 18, color: color),
+                                  Icon(icon, size: 38, color: color),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       method,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                         color: color,
                                       ),
@@ -333,7 +333,7 @@ class _KantongPageState extends State<KantongPage> {
                               Text(
                                 formatRupiah(balance),
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: color,
                                 ),
