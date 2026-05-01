@@ -5,6 +5,9 @@ import 'kantong_page.dart';
 import 'monthly_budget_page.dart';
 import 'profile_page.dart';
 import 'dart:ui';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -42,9 +45,42 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       selectedIndex = index;
     });
   }
+  
 
   Future<void> openScanReceipt() async {
-    print("Scan receipt clicked");
+    // 🔥 MINTA PERMISSION DULU
+    final status = await Permission.camera.request();
+
+    if (!status.isGranted) {
+      print("Permission kamera ditolak");
+      return;
+    }
+
+    final picker = ImagePicker();
+    final file = await picker.pickImage(source: ImageSource.camera);
+
+    if (file == null) return;
+
+    final inputImage = InputImage.fromFilePath(file.path);
+    final textRecognizer = TextRecognizer();
+
+    final RecognizedText recognizedText =
+        await textRecognizer.processImage(inputImage);
+
+    final text = recognizedText.text;
+
+    final parsed = parseReceipt(text);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddTransactionPage(
+          initialAmount: parsed['amount'],
+          initialMethod: parsed['method'],
+          initialDate: parsed['date'],   // tambahan
+        ),
+      ),
+    );
   }
 
   Future<void> openAddTransaction() async {
@@ -89,7 +125,12 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 child: FloatingActionButton.small(
                   heroTag: "scan",
                   shape: const CircleBorder(),
-                  onPressed: isFabOpen ? openScanReceipt : null,
+                  onPressed: isFabOpen
+                  ? () {
+                      print("SCAN DIKLIK");
+                      openScanReceipt();
+                    }
+                  : null,
                   backgroundColor: const Color(0xFF22C55E),
                   foregroundColor: Colors.white,
                   child: const Icon(Icons.camera_alt),
@@ -106,8 +147,10 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 opacity: isFabOpen ? 1 : 0,
                 child: FloatingActionButton.small(
                   heroTag: "add",
-                  shape: const CircleBorder(),
-                  onPressed: isFabOpen ? openAddTransaction : null,
+                  shape: const CircleBorder(),  
+                  onPressed: () {
+                    openAddTransaction();
+                  },
                   backgroundColor: const Color(0xFF22C55E),
                   foregroundColor: Colors.white,
                   child: const Icon(Icons.add),
@@ -123,7 +166,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 duration: const Duration(milliseconds: 180),
                 opacity: isFabOpen ? 1 : 0,
                 child: FloatingActionButton.small(
-                  heroTag: "add",
+                  heroTag: "edit",
                   shape: const CircleBorder(),
                   onPressed: isFabOpen ? openAddTransaction : null,
                   backgroundColor: const Color(0xFF22C55E),
@@ -252,4 +295,152 @@ class ProfilPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Map<String, dynamic> parseReceipt(String text) {
+  double amount = 0;
+  String method = 'Cash';
+  String store = '';
+  String date = '';
+
+  final months = {
+    'jan': '01',
+    'feb': '02',
+    'mar': '03',
+    'apr': '04',
+    'mei': '05',
+    'may': '05',
+    'jun': '06',
+    'jul': '07',
+    'agu': '08',
+    'aug': '08',
+    'sep': '09',
+    'okt': '10',
+    'oct': '10',
+    'nov': '11',
+    'des': '12',
+    'dec': '12',
+  };
+
+  final lines = text.split('\n');
+
+  // ======================
+  // 1. DETECT STORE
+  // ======================
+  for (var line in lines) {
+    final clean = line.trim();
+    final lower = clean.toLowerCase();
+
+    if (clean.isEmpty) continue;
+
+    if (lower.contains('receipt')) continue;
+    if (lower.contains('order')) continue;
+    if (lower.contains('total')) continue;
+    if (lower.contains('rp')) continue;
+    if (lower.contains('jl')) continue;
+    if (lower.contains('id')) continue;
+    if (lower.contains('collected')) continue;
+
+    if (clean.length < 30) {
+      store = clean;
+      break;
+    }
+  }
+
+  // ======================
+  // 2. DETECT DATE (FIXED)
+  // ======================
+  final dateRegex = RegExp(r'(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})');
+
+  for (var line in lines) {
+    final match = dateRegex.firstMatch(line);
+
+    if (match != null) {
+      final day = match.group(1)!.padLeft(2, '0');
+      final monthText = match.group(2)!.toLowerCase();
+      final year = match.group(3)!;
+
+      final month = months[monthText] ?? '01';
+
+      date = '$day/$month/$year';
+      break;
+    }
+  }
+
+  // ======================
+  // 3. DETECT TOTAL (STRICT)
+  // ======================
+  for (var line in lines) {
+    final lower = line.toLowerCase();
+
+    if (lower.contains('total') &&
+        !lower.contains('subtotal') &&
+        !lower.contains('total item')) {
+
+      final match = RegExp(r'[\d.,]+').firstMatch(line);
+
+      if (match != null) {
+        String raw = match.group(0)!;
+
+        raw = raw.replaceAll('.', '').replaceAll(',', '.');
+
+        final parsed = double.tryParse(raw);
+
+        if (parsed != null) {
+          amount = parsed;
+          break;
+        }
+      }
+    }
+  }
+
+  // ======================
+  // 4. FALLBACK TOTAL
+  // ======================
+  if (amount == 0) {
+    for (var line in lines) {
+      final lower = line.toLowerCase();
+
+      if (lower.contains('rp')) {
+        final match = RegExp(r'[\d.,]+').firstMatch(line);
+
+        if (match != null) {
+          String raw = match.group(0)!;
+
+          raw = raw.replaceAll('.', '').replaceAll(',', '.');
+
+          final parsed = double.tryParse(raw);
+
+          if (parsed != null && parsed > amount) {
+            amount = parsed;
+          }
+        }
+      }
+    }
+  }
+
+  // ======================
+  // 5. PAYMENT METHOD
+  // ======================
+  final lowerText = text.toLowerCase();
+
+  if (lowerText.contains('bca') || lowerText.contains('qr')) {
+    method = 'BCA';
+  } else if (lowerText.contains('ovo') ||
+      lowerText.contains('gopay') ||
+      lowerText.contains('dana')) {
+    method = 'E-Wallet';
+  } else if (lowerText.contains('cash')) {
+    method = 'Cash';
+  }
+
+  // ======================
+  // FINAL RETURN
+  // ======================
+  return {
+    'amount': amount,
+    'method': method,
+    'store': store,
+    'date': date,
+  };
 }

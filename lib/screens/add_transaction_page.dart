@@ -10,7 +10,18 @@ import '../services/google_sheets_service.dart';
 class AddTransactionPage extends StatefulWidget {
   final TransactionModel? transaction;
 
-  const AddTransactionPage({super.key, this.transaction});
+  final double? initialAmount;
+  final String? initialMethod;
+  final String? initialDate;
+
+
+  const AddTransactionPage({
+    super.key,
+    this.transaction,
+    this.initialAmount,
+    this.initialMethod,
+    this.initialDate,
+  });
 
   @override
   State<AddTransactionPage> createState() => _AddTransactionPageState();
@@ -24,6 +35,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   String? incomeCategory;
   String? expenseCategory;
   String? targetWallet;
+    String normalizeDate(String input) {
+      try {
+        final parsed = DateFormat('d MMM yyyy', 'en_US').parse(input);
+        return DateFormat('yyyy-MM-dd').format(parsed);
+      } catch (e) {
+        return input; // fallback
+      }
+    }
 
   List<String> walletMethods = [];
   List<String> incomeSources = [];
@@ -33,11 +52,32 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController additionalNoteController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    loadMasterData(); 
-  }
+
+   @override
+    void initState() {
+      super.initState();
+
+      loadMasterData();
+
+      // 🔥 AUTO SET PENGELUARAN JIKA DARI SCAN
+      if (widget.initialAmount != null && widget.initialAmount! > 0) {
+        transactionType = 'Pengeluaran';
+      }
+
+      if (widget.initialAmount != null) {
+        amountController.text =
+            formatNumberOnlyToRupiahText(widget.initialAmount!.toInt().toString());
+      }
+
+      if (widget.initialMethod != null) {
+        paymentMethod = widget.initialMethod!;
+      }
+
+      if (widget.initialDate != null && widget.initialDate!.isNotEmpty) {
+        dateController.text = normalizeDate(widget.initialDate!);
+      }
+
+    }
 
   Future<void> loadMasterData() async {
     final walletResult = await DatabaseHelper.instance.getWalletMethods();

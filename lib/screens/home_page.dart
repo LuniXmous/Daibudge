@@ -31,6 +31,14 @@ class _HomePageState extends State<HomePage> {
     return chunks;
   }
 
+ String safeGet(List list, int index) {
+  if (index < list.length) {
+    return list[index].toString();
+  }
+  return '';
+}
+  
+
   Future<void> loadWalletMethods() async {
     final data = await DatabaseHelper.instance.getWalletMethods();
     setState(() {
@@ -311,19 +319,27 @@ class _HomePageState extends State<HomePage> {
     return formatter.format(value);
   }
 
-  DateTime parseDate(String date) {
+DateTime parseDate(String date) {
+  if (date.contains('/')) {
     final parts = date.split('/');
     return DateTime(
       int.parse(parts[2]),
       int.parse(parts[1]),
       int.parse(parts[0]),
     );
+  } else if (date.contains('-')) {
+    return DateTime.parse(date); // langsung handle ISO
+  } else {
+    return DateTime.now(); // fallback aman
   }
+}
 
-  String formatDisplayDate(String date) {
-    final parsedDate = parseDate(date);
-    return DateFormat('dd MMM yyyy', 'id_ID').format(parsedDate);
-  }
+
+
+String formatDisplayDate(String date) {
+  final parsedDate = parseDate(date);
+  return DateFormat('dd MMM yyyy', 'id_ID').format(parsedDate);
+}
 
   Color getTransactionColor(String type) {
     if (type == 'Pemasukan') return Colors.green;
